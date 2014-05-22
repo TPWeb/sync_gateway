@@ -79,6 +79,7 @@ type DbConfig struct {
 	Shadow     *ShadowConfig               `json:"shadow,omitempty"`      // External bucket to shadow
 }
 
+
 type DbConfigMap map[string]*DbConfig
 
 // JSON object that defines a User/Role within a DbConfig. (Also used in admin REST API.)
@@ -204,12 +205,14 @@ func (self *ServerConfig) MergeWith(other *ServerConfig) error {
 	if other.Pretty {
 		self.Pretty = true
 	}
+
 	for name, db := range other.Databases {
 		if self.Databases[name] != nil {
 			return fmt.Errorf("Database %q already specified earlier", name)
 		}
 		self.Databases[name] = db
 	}
+
 	return nil
 }
 

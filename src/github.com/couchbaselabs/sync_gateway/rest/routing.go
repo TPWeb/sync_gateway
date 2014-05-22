@@ -175,6 +175,14 @@ func wrapRouter(sc *ServerContext, privs handlerPrivs, router *mux.Router) http.
 	return http.HandlerFunc(func(response http.ResponseWriter, rq *http.Request) {
 		fixQuotedSlashes(rq)
 		var match mux.RouteMatch
+
+		//if sc.config.CORS != nil {
+            response.Header().Add("Access-Control-Allow-Origin", "*")
+            response.Header().Add("Access-Control-Allow-Credentials", "true")
+            response.Header().Add("Access-Control-Allow-Headers", "DNT, X-Mx-ReqToken, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type")
+       // }
+
+
 		if router.Match(rq, &match) {
 			router.ServeHTTP(response, rq)
 		} else {
@@ -193,6 +201,10 @@ func wrapRouter(sc *ServerContext, privs handlerPrivs, router *mux.Router) http.
 				h.writeStatus(http.StatusNotFound, "unknown URL")
 			} else {
 				response.Header().Add("Allow", strings.Join(options, ", "))
+				//if sc.config.CORS != nil {
+                    response.Header().Add("Access-Control-Max-Age", "1728000")
+                response.Header().Add("Access-Control-Allow-Methods", strings.Join(options, ", "))
+               // }
 				if rq.Method != "OPTIONS" {
 					h.writeStatus(http.StatusMethodNotAllowed, "")
 				}
